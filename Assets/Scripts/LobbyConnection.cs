@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using System;
+using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,9 @@ public class LobbyConnection : MonoBehaviour
         [SerializeField] private TMP_InputField nameInputField;
         [SerializeField] private Button connectButton;
         [SerializeField] private TMP_Text nameText;
+        [SerializeField] private GameObject startPanel;
+        [SerializeField] private GameObject namePanel;
+        [SerializeField] private GameObject ipPanel;
         private string _playerName;
         private string _ip;
 
@@ -25,36 +29,48 @@ public class LobbyConnection : MonoBehaviour
                 ipInputField.onEndEdit.AddListener(SetIp);
                 startServer.onClick.AddListener(OnServerStartHandler);
                 startClient.onClick.AddListener(OnClientStartHandler);
+                connectButton.onClick.AddListener(OnConnectHandler);
         }
 
         private void OnClientStartHandler()
         {
-                connectButton.gameObject.SetActive(true);
-                nameInputField.gameObject.SetActive(true);
-                startClient.gameObject.SetActive(false);
-                startServer.gameObject.SetActive(false);
+                startPanel.SetActive(false);
+                namePanel.SetActive(true);
         }
 
         private void OnServerStartHandler()
         {
+                startPanel.SetActive(false); 
                 networkManager.StartServer();
-                startClient.gameObject.SetActive(false);
-                startServer.gameObject.SetActive(false);   
         }
 
         private void SetName(string playerName)
         {
                 _playerName = playerName;
                 if (string.IsNullOrWhiteSpace(_playerName)) return;
-                nameText.gameObject.SetActive(true);
+                namePanel.SetActive(false);
+                ipPanel.SetActive(true);
                 nameText.text = $"Hello {_playerName}!";
-                nameInputField.gameObject.SetActive(false);
-                ipInputField.gameObject.SetActive(true);
         }
 
         private void SetIp(string ip)
         {
                 _ip = ip;
                 connectButton.interactable = !string.IsNullOrWhiteSpace(_ip);
+        }
+        
+        private void OnConnectHandler()
+        {
+                networkManager.networkAddress = _ip;
+                networkManager.StartClient();  
+        }
+
+        private void OnDestroy()
+        {
+                nameInputField.onEndEdit.RemoveListener(SetName);
+                ipInputField.onEndEdit.RemoveListener(SetIp);
+                startServer.onClick.RemoveListener(OnServerStartHandler);
+                startClient.onClick.RemoveListener(OnClientStartHandler);
+                connectButton.onClick.RemoveListener(OnConnectHandler);    
         }
 }
