@@ -6,7 +6,7 @@ public class PlayerInputController : MonoBehaviour
 {
     [SerializeField] private NetworkIdentity identity;
     [SerializeField] private Transform playerTransform;
-    [SerializeField] private Camera playerCamera;
+    [SerializeField] private Transform cameraTransform;
     [SerializeField] private float moveSpeed;
     [SerializeField] private float sensitiveVertical;
     [SerializeField] private float sensitiveHorizontal;
@@ -31,9 +31,8 @@ public class PlayerInputController : MonoBehaviour
     {
         if (_input.MouseAndKeyboard.Move.phase != InputActionPhase.Started) return;
         _horizontalInput = _input.MouseAndKeyboard.Move.ReadValue<Vector2>();
-        var moveVector = (playerTransform.forward * _horizontalInput.y +
-                          playerTransform.right * _horizontalInput.x) * moveSpeed;
-        playerTransform.Translate(moveVector * deltaTime);
+        var moveVector = new Vector3(_horizontalInput.x, 0f, _horizontalInput.y);
+        playerTransform.Translate(moveVector * moveSpeed * deltaTime);
     }
 
     private void PlayerAimX()
@@ -43,7 +42,7 @@ public class PlayerInputController : MonoBehaviour
         _rotationX = Mathf.Clamp(_rotationX, -rotateXClamp, rotateXClamp);
         var playerRotation = playerTransform.eulerAngles;
         playerRotation.x = _rotationX;
-        playerCamera.transform.eulerAngles = playerRotation;
+        cameraTransform.eulerAngles = playerRotation;
     }
 
     private void PlayerAimY(float deltaTime)
