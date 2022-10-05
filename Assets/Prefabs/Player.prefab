@@ -517,6 +517,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3184878410440b9805a59e896f6b418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  identity: {fileID: 207784602090979620}
   playerTransform: {fileID: 8202414109666301341}
   playerCamera: {fileID: 8202414109995568570}
   moveSpeed: 5
