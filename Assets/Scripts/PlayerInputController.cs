@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerInputController : MonoBehaviour
@@ -7,9 +6,14 @@ public class PlayerInputController : MonoBehaviour
        [SerializeField] private Transform playerTransform;
        [SerializeField] private Camera playerCamera;
        [SerializeField] private float moveSpeed;
-       [SerializeField] private float aimSensitive;
+       [SerializeField] private float sensitiveVertical;
+       [SerializeField] private float sensitiveHorizontal;
+       [SerializeField] private float rotateXClamp;
        private InputActions _input;
-    
+       private Vector2 _horizontalInput;
+       private float _rotationX;
+       private float _rotationY;
+
 
        private void Awake()
        {
@@ -21,33 +25,38 @@ public class PlayerInputController : MonoBehaviour
              _input.MouseAndKeyboard.Enable();
        }
 
-       private void PlayerMove()
+       private void PlayerMove(float deltaTime)
        {
-           if (_input.MouseAndKeyboard.Move.phase != InputActionPhase.Started) return;
-           var inputVector = _input.MouseAndKeyboard.Move.ReadValue<Vector2>();
-           var moveVector = new Vector3(inputVector.x, 0f, inputVector.y);
-           playerTransform.Translate( moveVector * moveSpeed * Time.deltaTime);
+           if(_input.MouseAndKeyboard.Move.phase != InputActionPhase.Started) return;
+           _horizontalInput = _input.MouseAndKeyboard.Move.ReadValue<Vector2>();
+           var moveVector = (playerTransform.forward * _horizontalInput.y +
+                             playerTransform.right * _horizontalInput.x) * moveSpeed;
+           playerTransform.Translate(moveVector * deltaTime);
        }
 
        private void PlayerAimX()
        {
            if (_input.MouseAndKeyboard.MouseY.phase != InputActionPhase.Started) return;
-           var inputAim = _input.MouseAndKeyboard.MouseY.ReadValue<float>();
-           playerCamera.transform.Rotate(playerTransform.right * inputAim * aimSensitive);
+           _rotationX -= _input.MouseAndKeyboard.MouseY.ReadValue<float>() * sensitiveVertical;
+           _rotationX = Mathf.Clamp(_rotationX, -rotateXClamp, rotateXClamp);
+           var playerRotation = playerTransform.eulerAngles;
+           playerRotation.x = _rotationX;
+           playerCamera.transform.eulerAngles = playerRotation;
        }
        
-       private void PlayerAimY()
+       private void PlayerAimY(float deltaTime)
        {
            if (_input.MouseAndKeyboard.MouseX.phase != InputActionPhase.Started) return;
-           var inputAim = _input.MouseAndKeyboard.MouseX.ReadValue<float>();
-           playerTransform.Rotate(playerTransform.up * inputAim * aimSensitive);
+           _rotationY = _input.MouseAndKeyboard.MouseX.ReadValue<float>() * sensitiveHorizontal;
+           playerTransform.Rotate(playerTransform.up * _rotationY * deltaTime);
        }
        
        private void Update()
        {
-           PlayerMove();
+           var deltaTime = Time.deltaTime;
+           PlayerMove(deltaTime);
            PlayerAimX();
-           PlayerAimY();
+           PlayerAimY(deltaTime);
        }
 
        private void OnDisable()
