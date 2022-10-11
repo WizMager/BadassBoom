@@ -1,9 +1,8 @@
-﻿using System;
-using ComponentViews;
+﻿using ComponentViews;
 using Photon.Pun;
 using UnityEngine;
 
-namespace DefaultNamespace
+namespace Game
 {
     public class GameManager : MonoBehaviourPunCallbacks
     {
