@@ -22,21 +22,48 @@ namespace LoginAndLobby
 
         private void Start()
         {
-            PhotonNetwork.GameVersion = "1";
-            PhotonNetwork.AutomaticallySyncScene = true;
-            PhotonNetwork.ConnectUsingSettings();
-            createRoomButton.onClick.AddListener(OnCreateRoomHandler);
-            loginButton.onClick.AddListener(OnLoginHandler);
-            exitButton.onClick.AddListener(OnExitHandler);
-            createRoomButton.gameObject.SetActive(false);
-            textInputField.interactable = false;
-            loginButton.interactable = false;
+            // PhotonNetwork.GameVersion = "1";
+            // PhotonNetwork.AutomaticallySyncScene = true;
+            // PhotonNetwork.ConnectUsingSettings();
+            // createRoomButton.onClick.AddListener(OnCreateRoomHandler);
+            // loginButton.onClick.AddListener(OnLoginHandler);
+            // exitButton.onClick.AddListener(OnExitHandler);
+            // createRoomButton.gameObject.SetActive(false);
+            // textInputField.interactable = false;
+            // loginButton.interactable = false; 
+            if (string.IsNullOrEmpty(PhotonNetwork.NickName))
+            {
+                PhotonNetwork.GameVersion = "1";
+                PhotonNetwork.AutomaticallySyncScene = true;
+                PhotonNetwork.ConnectUsingSettings();
+                createRoomButton.onClick.AddListener(OnCreateRoomHandler);
+                loginButton.onClick.AddListener(OnLoginHandler);
+                exitButton.onClick.AddListener(OnExitHandler);
+                createRoomButton.gameObject.SetActive(false);
+                textInputField.interactable = false;
+                loginButton.interactable = false; 
+            }
+            else
+            {
+                menuTitleText.text = $"Hello again {PhotonNetwork.NickName}!";
+                loginButton.gameObject.SetActive(false);
+                createRoomButton.onClick.AddListener(OnCreateRoomHandler);
+                exitButton.onClick.AddListener(OnExitHandler);
+            }
         }
 
         public override void OnConnectedToMaster()
         {
-            textInputField.interactable = true;
-            loginButton.interactable = true;
+            if (string.IsNullOrEmpty(PhotonNetwork.NickName))
+            {
+                textInputField.interactable = true;
+                loginButton.interactable = true;
+            }
+            else
+            {
+                PhotonNetwork.JoinLobby();
+            }
+            
         }
 
         private void OnCreateRoomHandler()
