@@ -712,8 +712,10 @@ MonoBehaviour:
   messageInputField: {fileID: 386268390}
   chatContainer: {fileID: 345586031}
   textLinePrefab: {fileID: 8176188366553196269, guid: c1dbebfb689d05946bf7b0588d221e63, type: 3}
+  chatScrollRect: {fileID: 2016273124}
   charCountInLineText: 25
   heightTextLinePrefab: 50
+  maximumChatHeightBeforeChangePosition: 1000
 --- !u!4 &1368733300
 Transform:
   m_ObjectHideFlags: 0
@@ -1242,7 +1244,7 @@ MonoBehaviour:
   m_Content: {fileID: 345586031}
   m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
