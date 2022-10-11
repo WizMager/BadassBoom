@@ -16,7 +16,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField] private RectTransform roomContainer;
     [SerializeField] private GameObject roomButtonPrefab;
     [SerializeField] private float heightRoomButtonsAndSpaceBetweenIts = 100f;
-    private List<RoomButtonComponents> _roomButtons = new List<RoomButtonComponents>();
+    private readonly List<RoomButtonComponents> _roomButtons = new List<RoomButtonComponents>();
 
     private void Start()
     {
@@ -88,7 +88,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             _roomButtons.Add(roomButton);
             var buttonText = roomButton.GetButtonText;
             buttonText.text = roomList[i].Name;
+            roomButton.OnRoomClick += OnRoomClickHandler;
         }
+    }
+
+    private void OnRoomClickHandler(string id, RoomButtonComponents roomButton)
+    {
+        roomButton.OnRoomClick -= OnRoomClickHandler;
+        if (PhotonNetwork.LocalPlayer.UserId != id) return;
+        PhotonNetwork.JoinRoom(roomButton.GetButtonText.text);
     }
 
     private void OnExitHandler()
