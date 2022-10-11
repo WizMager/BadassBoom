@@ -73,6 +73,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         foreach (var roomButton in _roomButtons)
         {
+            roomButton.OnRoomClick -= OnRoomClickHandler;
             Destroy(roomButton.gameObject);
         }
         _roomButtons.Clear();
@@ -94,8 +95,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     private void OnRoomClickHandler(string id, RoomButtonComponents roomButton)
     {
-        roomButton.OnRoomClick -= OnRoomClickHandler;
         if (PhotonNetwork.LocalPlayer.UserId != id) return;
+        roomButton.OnRoomClick -= OnRoomClickHandler;
         PhotonNetwork.JoinRoom(roomButton.GetButtonText.text);
     }
 
